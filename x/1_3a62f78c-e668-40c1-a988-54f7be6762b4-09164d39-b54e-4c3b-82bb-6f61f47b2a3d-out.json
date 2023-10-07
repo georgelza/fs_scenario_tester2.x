@@ -1,0 +1,303 @@
+{
+ "eventId": "09164d39-b54e-4c3b-82bb-6f61f47b2a3d",
+ "eventType": "paymentRT",
+ "processTime": "2023-10-05T12:16:29.096086Z",
+ "responseBody": {
+  "entities": [
+   {
+    "configGroups": [],
+    "entityId": "ABSAZAJ0-23434554845",
+    "entityType": "COUNTERPARTY",
+    "models": [],
+    "outputTags": [],
+    "overallScore": {
+     "overallScore": null
+    },
+    "riskStatus": "no-risk",
+    "tenantId": "SBZAZAJ0"
+   },
+   {
+    "configGroups": [],
+    "entityId": "0811455558",
+    "entityType": "COUNTERPARTYPROXY",
+    "models": [],
+    "outputTags": [],
+    "overallScore": {
+     "overallScore": null
+    },
+    "riskStatus": "no-risk",
+    "tenantId": "SBZAZAJ0"
+   },
+   {
+    "configGroups": [],
+    "entityId": "0631489566",
+    "entityType": "ACCOUNTPROXY",
+    "models": [],
+    "outputTags": [],
+    "overallScore": {
+     "overallScore": null
+    },
+    "riskStatus": "no-risk",
+    "tenantId": "SBZAZAJ0"
+   },
+   {
+    "configGroups": [],
+    "entityId": "1239656234",
+    "entityType": "ACCOUNTCUSTOMER",
+    "models": [],
+    "outputTags": [],
+    "overallScore": {
+     "overallScore": null
+    },
+    "riskStatus": "no-risk",
+    "tenantId": "SBZAZAJ0"
+   },
+   {
+    "configGroups": [],
+    "entityId": "SBZAZAJ0-1239656234",
+    "entityType": "ACCOUNT",
+    "models": [],
+    "outputTags": [],
+    "overallScore": {
+     "overallScore": null
+    },
+    "riskStatus": "no-risk",
+    "tenantId": "SBZAZAJ0"
+   },
+   {
+    "configGroups": [],
+    "entityId": "23434554845",
+    "entityType": "COUNTERPARTYCUSTOMER",
+    "models": [],
+    "outputTags": [],
+    "overallScore": {
+     "overallScore": null
+    },
+    "riskStatus": "no-risk",
+    "tenantId": "SBZAZAJ0"
+   }
+  ],
+  "jsonVersion": 4,
+  "originatingEvent": {
+   "_metadata": {
+    "entities": {
+     "ACCOUNT": [
+      "SBZAZAJ0-1239656234"
+     ],
+     "ACCOUNTCUSTOMER": [
+      "1239656234"
+     ],
+     "ACCOUNTPROXY": [
+      "0631489566"
+     ],
+     "COUNTERPARTY": [
+      "ABSAZAJ0-23434554845"
+     ],
+     "COUNTERPARTYCUSTOMER": [
+      "23434554845"
+     ],
+     "COUNTERPARTYPROXY": [
+      "0811455558"
+     ]
+    },
+    "eventId": "09164d39-b54e-4c3b-82bb-6f61f47b2a3d",
+    "eventTime": "2023-10-05T14:16:28Z",
+    "eventType": "paymentRT",
+    "execution": {
+     "expectResponse": true
+    },
+    "financialValue": 555.32,
+    "receivedTime": "2023-10-05T12:16:29Z",
+    "searchable": {
+     "accountAddress": {
+      "addressLine1": "streetName",
+      "postalCode": "1234"
+     },
+     "accountAgentId": "SBZAZAJJ",
+     "accountCustomerEntityId": "1239656234",
+     "accountCustomerId": "1239656234",
+     "accountEntityId": "SBZAZAJ0-1239656234",
+     "accountId": "1239656234",
+     "accountNumber": "1239656234",
+     "accountProxyEntityId": "0631489566",
+     "accountProxyId": "0631489566",
+     "counterpartyAddress": {
+      "addressLine1": "streetName",
+      "postalCode": "1234"
+     },
+     "counterpartyAgentId": "ABSAZAJJ",
+     "counterpartyCustomerEntityId": "23434554845",
+     "counterpartyCustomerId": "23434554845",
+     "counterpartyEntityId": "ABSAZAJ0-23434554845",
+     "counterpartyId": "23434554845",
+     "counterpartyName": {
+      "fullName": "Liezel"
+     },
+     "counterpartyNumber": "23434554845",
+     "counterpartyProxyEntityId": "0811455558",
+     "counterpartyProxyId": "0811455558",
+     "eventId": "09164d39-b54e-4c3b-82bb-6f61f47b2a3d",
+     "eventTime": "2023-10-05T14:16:28",
+     "eventType": "paymentRT",
+     "paymentClearingSystemReference": "b4f26332-cebf-427b-8771-3d4294931d21",
+     "requestExecutionDate": "2023-10-05",
+     "settlementDate": "2023-10-05",
+     "transactionId": "3a62f78c-e668-40c1-a988-54f7be6762b4"
+    },
+    "systemEventId": "19214-PPsAvPCT",
+    "tenantId": [
+     "SBZAZAJ0"
+    ]
+   },
+   "accountAddress": {
+    "addressLine1": "streetName",
+    "addressLine2": "buildingNumber and buildingName",
+    "country": "ZAF",
+    "countrySubDivision": "countrySubDivision",
+    "fullAddress": "addressLine",
+    "postalCode": "1234",
+    "townName": "townName"
+   },
+   "accountAgentId": "SBZAZAJJ",
+   "accountBICFI": "SBZAZAJJ",
+   "accountCustomerEntityId": "1239656234",
+   "accountCustomerId": "1239656234",
+   "accountDomain": "CTT.domain",
+   "accountEntityId": "SBZAZAJ0-1239656234",
+   "accountId": "1239656234",
+   "accountIdCode": "10",
+   "accountName": {
+    "fullName": "George",
+    "namePrefix": "Mr",
+    "surname": "Simpson"
+   },
+   "accountNumber": "1239656234",
+   "accountProxyEntityId": "0631489566",
+   "accountProxyId": "0631489566",
+   "accountProxyType": "CTT.proxyType",
+   "amount": {
+    "baseCurrency": "zar",
+    "baseValue": 555.32,
+    "currency": "zar",
+    "value": 555.32
+   },
+   "chargeBearer": "DEBT",
+   "counterpartyAddress": {
+    "addressLine1": "streetName",
+    "addressLine2": "buildingNumber and buildingName",
+    "country": "ZAF",
+    "countrySubDivision": "countrySubDivision",
+    "fullAddress": "addressLine",
+    "postalCode": "1234",
+    "townName": "townName"
+   },
+   "counterpartyAgentId": "ABSAZAJJ",
+   "counterpartyBICFI": "ABSAZAJJ",
+   "counterpartyCustomerEntityId": "23434554845",
+   "counterpartyCustomerId": "23434554845",
+   "counterpartyDomain": "CTT.domain",
+   "counterpartyEntityId": "ABSAZAJ0-23434554845",
+   "counterpartyId": "23434554845",
+   "counterpartyIdCode": "00",
+   "counterpartyName": {
+    "fullName": "Liezel",
+    "namePrefix": "Miss",
+    "surname": "Smith"
+   },
+   "counterpartyNumber": "23434554845",
+   "counterpartyProxyEntityId": "0811455558",
+   "counterpartyProxyId": "0811455558",
+   "counterpartyProxyType": "CTT.proxyType",
+   "creationDate": "2023-10-05T14:16:28",
+   "destinationCountry": "ZAF",
+   "direction": "inbound",
+   "eventId": "09164d39-b54e-4c3b-82bb-6f61f47b2a3d",
+   "eventTime": "2023-10-05T14:16:28",
+   "eventType": "paymentRT",
+   "fromId": "ABSAZAJ0",
+   "instructedAgentId": "ABSAZAJJ",
+   "instructingAgentId": "SBZAZAJJ",
+   "intermediaryAgent1Id": "ABSAZAJJ",
+   "intermediaryAgent2Id": "SBZAZAJJ",
+   "localInstrument": "PBAC",
+   "msgStatus": "New",
+   "msgType": "CRTRF",
+   "numberOfTransactions": 1,
+   "paymentClearingSystemReference": "b4f26332-cebf-427b-8771-3d4294931d21",
+   "paymentMethod": "TRF",
+   "paymentReference": "b4f26332-cebf-427b-8771-3d4294931d21",
+   "requestExecutionDate": "2023-10-05",
+   "schemaVersion": 1,
+   "settlementClearingSystemCode": "RPP",
+   "settlementDate": "2023-10-05",
+   "settlementMethod": "CLRG",
+   "tenantId": "SBZAZAJ0",
+   "toId": "SBZAZAJ0",
+   "transactionId": "3a62f78c-e668-40c1-a988-54f7be6762b4",
+   "transactionType": "MTUP",
+   "ultimateAccountName": {
+    "fullName": "George",
+    "namePrefix": "Mr",
+    "surname": "Simpson"
+   },
+   "ultimateCounterpartyName": {
+    "fullName": "Liezel",
+    "namePrefix": "Miss",
+    "surname": "Smith"
+   },
+   "unstructuredRemittanceInformation": "b4f26332-cebf-427b-8771-3d4294931d21",
+   "verificationResult": "SUCC"
+  },
+  "outputTime": "2023-10-05T12:16:29.132Z",
+  "processorId": "proc",
+  "statusCode": "success",
+  "versions": {
+   "configGroups": [
+    {
+     "type": "global",
+     "version": "1"
+    },
+    {
+     "id": "210001",
+     "type": "analytical",
+     "version": "0"
+    }
+   ],
+   "modelGraph": 1
+  }
+ },
+ "responseHeaders": {
+  "Access-Control-Allow-Headers": [
+   "Origin, X-Requested-With, Content-Type, Content-Length, Accept"
+  ],
+  "Access-Control-Allow-Origin": [
+   "*"
+  ],
+  "Cache-Control": [
+   "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
+  ],
+  "Connection": [
+   "keep-alive"
+  ],
+  "Content-Length": [
+   "5585"
+  ],
+  "Content-Type": [
+   "application/json"
+  ],
+  "Date": [
+   "Thu, 05 Oct 2023 12:16:29 GMT"
+  ],
+  "Server": [
+   "webserver"
+  ],
+  "X-Content-Type-Options": [
+   "nosniff"
+  ],
+  "X-Xss-Protection": [
+   "1; mode=block"
+  ]
+ },
+ "responseStatus": "200 OK",
+ "transactionId": "3a62f78c-e668-40c1-a988-54f7be6762b4"
+}

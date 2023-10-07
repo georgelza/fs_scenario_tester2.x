@@ -1,0 +1,40 @@
+{
+ "eventId": "43937614-ac6c-4165-ac29-bea2bdaba809",
+ "eventType": "paymentRT",
+ "processTime": "2023-10-06T20:35:06.497442Z",
+ "responseBody": null,
+ "responseHeaders": {
+  "Access-Control-Allow-Headers": [
+   "Origin, X-Requested-With, Content-Type, Content-Length, Accept"
+  ],
+  "Access-Control-Allow-Origin": [
+   "*"
+  ],
+  "Cache-Control": [
+   "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
+  ],
+  "Connection": [
+   "keep-alive"
+  ],
+  "Content-Length": [
+   "8152"
+  ],
+  "Content-Type": [
+   "application/json"
+  ],
+  "Date": [
+   "Fri, 06 Oct 2023 20:35:06 GMT"
+  ],
+  "Server": [
+   "webserver"
+  ],
+  "X-Content-Type-Options": [
+   "nosniff"
+  ],
+  "X-Xss-Protection": [
+   "1; mode=block"
+  ]
+ },
+ "responseStatus": "200 OK",
+ "transactionId": "bacbd32d-9ae3-45b6-a108-6d3af58a1a47"
+}

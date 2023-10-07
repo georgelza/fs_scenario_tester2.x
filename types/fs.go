@@ -2,33 +2,33 @@ package types
 
 // Structs - the values we bring in from *app.json configuration file
 type Tp_general struct {
-	EchoConfig                   int
-	Hostname                     string
-	Debuglevel                   int
-	Echojson                     int
-	Testsize                     int    // Used to limit number of records posted, over rided when reading test cases from input_source,
-	Sleep                        int    // sleep time between API post
-	Httpposturl                  string // FeatureSpace API URL
-	Call_fs_api                  int
-	Cert_dir                     string
-	Cert_file                    string
-	Cert_key                     string
-	Datamode                     string  // rpp or hist
-	Json_to_file                 int     // Do we output JSON to file in output_path
-	Output_path                  string  // output location
-	Json_from_file               int     // Do we read JSON from input_path directory and post to FS API endpoint
-	Input_path                   string  // Where are my scenario JSON files located
-	MinTransactionValue          float64 // Min value if the fake transaction
-	MaxTransactionValue          float64 // Max value of the fake transaction
-	SeedFile                     string  // Which seed file to read in
-	EchoSeed                     int     // 0/1 Echo the seed data to terminal
-	CurrentPath                  string  // current
-	OSName                       string  // OS name
-	ProxyURL_eanabled            int     // Do we want to use the proxy redirect
-	ProxyURL                     string  // Proxy server to use
-	Prometheus_eanabled          int     // Do we want to use the prometheus instrumentation
-	Prometheus_push_gateway      string  // if above = 1 then we use the following 2 values
-	Prometheus_push_gateway_port string
+	EchoConfig              int
+	Hostname                string
+	Debuglevel              int
+	Echojson                int
+	Testsize                int    // Used to limit number of records posted, over rided when reading test cases from input_source,
+	Sleep                   int    // sleep time between API post
+	Httpposturl             string // FeatureSpace API URL
+	Call_fs_api             int
+	Cert_dir                string
+	Cert_file               string
+	Cert_key                string
+	Datamode                string  // rpp or hist
+	Sourcesystem            string  // IF hist then we can further elaborate if eft/ac/rtc
+	Json_to_file            int     // Do we output JSON to file in output_path
+	Output_path             string  // output location
+	Json_from_file          int     // Do we read JSON from input_path directory and post to FS API endpoint
+	Input_path              string  // Where are my scenario JSON files located
+	MinTransactionValue     float64 // Min value if the fake transaction
+	MaxTransactionValue     float64 // Max value of the fake transaction
+	SeedFile                string  // Which seed file to read in
+	EchoSeed                int     // 0/1 Echo the seed data to terminal
+	CurrentPath             string  // current
+	OSName                  string  // OS name
+	ProxyURL_enabled        int     // Do we want to use the proxy redirect
+	ProxyURL                string  // Proxy server to use
+	Prometheus_enabled      int     // Do we want to use the prometheus instrumentation
+	Prometheus_push_gateway string  // if above = 1 then we use the <ip:port>
 }
 
 // FS engineResponse components
@@ -46,16 +46,10 @@ type TCodeStruct struct {
 	Value string `json:"value,omitempty"`
 }
 
-type TTransactionTypeNRT struct {
+type TNameValue struct {
 	EFT []TCodeStruct `json:"eft,omitempty"`
-	EDO []TCodeStruct `json:"edo,omitempty"`
 	RTC []TCodeStruct `json:"rtc,omitempty"`
 	ACD []TCodeStruct `json:"acd,omitempty"`
-}
-type TIdCodes struct {
-	EFT []TCodeStruct `json:"eft,omitempty"`
-	ACD []TCodeStruct `json:"acd,omitempty"`
-	RTC []TCodeStruct `json:"rtc,omitempty"`
 }
 
 type TLocalInstrument struct {
@@ -64,18 +58,18 @@ type TLocalInstrument struct {
 }
 
 type TPSeed struct {
-	Decoration               []string            `json:"decoration,omitempty"`
-	PaymentStreamNRT         []string            `json:"paymentStreamNRT,omitempty"`
-	TransactionTypeNRT       TTransactionTypeNRT `json:"transactionTypes,omitempty"`
-	LocalInstrument          TLocalInstrument    `json:"localInstrument,omitempty"`
-	IdCodes                  TIdCodes            `json:"idCodes,omitempty"`
-	ChargeBearers            []string            `json:"chargeBearers,omitempty"`
-	RemittanceLocationMethod []string            `json:"remittanceLocationMethod,omitempty"`
-	SettlementMethod         []string            `json:"settlementMethod,omitempty"`
-	VerificationResult       []string            `json:"verificationResult,omitempty"`
-	PaymentFrequency         []string            `json:"paymentFrequency,omitempty"`
-	Tenants                  TTenants            `json:"tenants,omitempty"`
-	Accounts                 TAccounts           `json:"accounts,omitempty"`
+	Decoration               []string         `json:"decoration,omitempty"`
+	PaymentStreamNRT         []string         `json:"paymentStreamNRT,omitempty"`
+	LocalInstrument          TLocalInstrument `json:"localInstrument,omitempty"`
+	TransactionTypeNRT       TNameValue       `json:"transactionTypeNRT,omitempty"`
+	IdCodes                  TNameValue       `json:"idCodes,omitempty"`
+	ChargeBearers            []string         `json:"chargeBearers,omitempty"`
+	RemittanceLocationMethod []string         `json:"remittanceLocationMethod,omitempty"`
+	SettlementMethod         []string         `json:"settlementMethod,omitempty"`
+	VerificationResult       []string         `json:"verificationResult,omitempty"`
+	PaymentFrequency         []string         `json:"paymentFrequency,omitempty"`
+	Tenants                  TTenants         `json:"tenants,omitempty"`
+	Accounts                 TAccounts        `json:"accounts,omitempty"`
 }
 
 type TAddress struct {
@@ -191,8 +185,8 @@ type TAccounts struct {
 }
 
 type TTenants struct {
-	RT  []TTenant `json:"rt,omitempty"`
-	NRT []TTenant `json:"nrt,omitempty"`
+	Rt  []TTenant `json:"rt,omitempty"`
+	Nrt []TTenant `json:"nrt,omitempty"`
 }
 
 type TPaymentNRT = struct {

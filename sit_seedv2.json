@@ -1,23 +1,20 @@
 {
-
     "Decoration": [
         "decorationId_0"
     ],
-    
     "PaymentStreamNRT": [ 
-        "EFT",             # MSGType:  EFT   {"name": "EFT", "msgtype":"EFT"}
-        "RTC",             # MSGType:  RTCCT {"name": "RTC", "msgtype":"RTCCT"}
-        "ACD"              # MSGType:  900000 {"name": "ACD", "msgtype":"900000"}
+        "EFT",            
+        "RTC",           
+        "ACD"          
     ],
-
     "LocalInstrument": {
       "RPP" : [
-         {"name": "1", "value": "PBPX"},     # PBPX - Pay By Proxy 
-         {"name": "2", "value": "PBAC"},     # Pay By Account 
-         {"name": "3", "value": "RTP-PBPX"}, # Request to Pay: Pay By Proxy 
-         {"name": "4", "value": "RTP-PBAC"}  # Request to Pay: Pay By Account
+         {"name": "1", "value": "PBPX"},    
+         {"name": "2", "value": "PBAC"},     
+         {"name": "3", "value": "RTP-PBPX"}, 
+         {"name": "4", "value": "RTP-PBAC"}  
       ], 
-      "HIST": [                              # aka RecordID
+      "HIST": [                            
          {"name": "1", "value": "TRANSMISSION HEADER"},
          {"name": "2", "value": "INSTALLATION HEADER"},
          {"name": "4", "value": "USER HEADER"},
@@ -62,8 +59,8 @@
       ]
     },
 
-    "TransactionTypeNRT": {  # NRT Only
-         "EFT":[
+   "TransactionTypeNRT": {
+      "EFT": [
             {"name": "59", "value": "BankservAfrica Use - Service Charge"}, 
             {"name": "61", "value": "Salary"}, 
             {"name": "62", "value": "Pension"},
@@ -129,30 +126,10 @@
             {"name": "57", "value": "Bank Use - Garage Card"},
             {"name": "58", "value": "Bank Use - Service Charge"}
          ],
-
-         "EDO": [
-            {"name": "01", "value": "EDO 2  Day Tracking"},
-            {"name": "02", "value": "EDO 4 Day Tracking "},
-            {"name": "03", "value": "EDO 5 Day Tracking"},
-            {"name": "04", "value": "EDO 6 Day Tracking"},
-            {"name": "05", "value": "EDO 7 Day Tracking"},
-            {"name": "06", "value": "EDO 8 Day Tracking"},
-            {"name": "07", "value": "EDO 9 Day Tracking"},
-            {"name": "12", "value": "EDO No Tracking"},
-            {"name": "13", "value": "EDO 1 Day Tracking"},
-            {"name": "14", "value": "EDO 3 Day Tracking"},
-            {"name": "15", "value": "EDO 7 Day Tracking"},
-            {"name": "16", "value": "EDO 14 Day Tracking"},
-            {"name": "17", "value": "EDO 21 Day Tracking"},
-            {"name": "18", "value": "EDO 32 Day Tracking"},
-            {"name": "19", "value": "EDO Stop Presentation"}
-         ],
-
-         "RTC": [
+      "RTC": [
             {"name": "42", "value": "Real Time Clearance"}
          ],
-
-         "ACD": [
+      "ACD": [
             {"name": "00", "value": "Dummy for Billing"},
             {"name": "10", "value": "Contra"},
             {"name": "21", "value": "Insurance Premium "},
@@ -207,14 +184,14 @@
          ]
     },
 
-    "ChargeBearers": [              # Potentially Remove
+    "ChargeBearers": [          
         "DEBT",
         "CRED",
         "SHAR",
         "SLEV"
     ],
 
-    "RemittanceLocationMethod": [   # Potentially Remove
+    "RemittanceLocationMethod": [  
         "FAXI",
         "EDIC",
         "URID",
@@ -223,14 +200,14 @@
         "SMSM"
     ],
     
-    "SettlementMethod": [           # RPP Methods - Potentially Remove
+    "SettlementMethod": [         
         "INDA",
         "INGA",
         "COVE",
         "CLRG"
     ],
 
-    "VerificationResult": [         # Potentially Remove
+    "VerificationResult": [       
         "FAIL",
         "FUTA",
         "MISS",
@@ -242,7 +219,7 @@
         "ERRR"
     ],
 
-    "PaymentFrequency": [           # Potentially Remove
+    "PaymentFrequency": [       
         "YEAR",
         "MNTH",
         "QURT",
@@ -1259,35 +1236,35 @@
           "BranchRangeEnd":299999,
           "Bicfi":"FIRNZAJJ"
           },
-          {   # Bank Division/Branch Name, please enter
+          {   
           "Name":"ABSA",
           "TenantId":"ABSAZAJ0",
           "BranchRangeStart":300000,
           "BranchRangeEnd":349999,
           "Bicfi":"ABSAZAJJ"
           },
-          {    # Bank Division/Branch Name, please enter
+          {   
           "Name":"ABSA",
           "TenantId":"ABSAZAJ0",
           "BranchRangeStart":420000,
           "BranchRangeEnd":429999,
           "Bicfi":"ABSAZAJJ"
           },
-          {    # Bank Division/Branch Name, please enter
+          {   
           "Name":"ABSA",
           "TenantId":"ABSAZAJ0",
           "BranchRangeStart":500000,
           "BranchRangeEnd":569999,
           "Bicfi":"ABSAZAJJ"
           },
-          {    # Bank Division/Branch Name, please enter
+          {  
           "Name":"ABSA",
           "TenantId":"ABSAZAJ0",
           "BranchRangeStart":609000,
           "BranchRangeEnd":639999,
           "Bicfi":"ABSAZAJJ"
           },
-          {    # Bank Division/Branch Name, please enter
+          {    
           "Name":"ABSA",
           "TenantId":"ABSAZAJ0",
           "BranchRangeStart":640000,
@@ -1320,7 +1297,7 @@
           "TenantId":"CBZAZAJ0",
           "BranchRangeStart":678000,
           "BranchRangeEnd":678999
-          },
+          }
       ],
 
       "NRT": 
