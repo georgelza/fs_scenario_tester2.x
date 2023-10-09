@@ -973,6 +973,53 @@ func httpCALL(Bytes []byte, url string, client *http.Client) (Response *http.Res
 	return httpResponse, nil
 }
 
+func RiskScoreExtract(t_Response map[string]interface{}) (riskScore float64, err error) {
+
+	// Score Extraction
+	var vScore float64
+	vScore = 0.0
+
+	// Access the nested array
+	entities, ok := t_Response["entities"].([]interface{})
+	if !ok {
+		err = errors.New("error accessing entities")
+		grpcLog.Errorln(err)
+		return 0, err
+
+	}
+
+	// entities are an array of json objects
+	for _, entity := range entities {
+		entityMap, ok := entity.(map[string]interface{})
+		if !ok {
+			err = errors.New("error accessing entity details")
+			grpcLog.Errorln(err)
+			return 0, err
+		}
+
+		// Access the details map for each language
+		overallScores, ok := entityMap["overallScore"].(map[string]interface{})
+		if !ok {
+			err = errors.New("error accessing overall score map details")
+			grpcLog.Errorln(err)
+		}
+
+		for _, value := range overallScores {
+			if value != nil {
+				f, ok := value.(float64) // this won't panic because there's an ok
+				if ok {
+					if f > float64(vScore) {
+						vScore = f
+					}
+				}
+			}
+		}
+	}
+
+	return vScore, nil
+
+}
+
 // Big worker... This si where everything happens.
 func runLoader(arg string) {
 
@@ -1341,43 +1388,53 @@ func runLoader(arg string) {
 				// it's a paymentRT (only Inbound event that response with a 200 is paymentRT event)
 				if vGeneral.Prometheus_enabled == 1 && t_InboundPayload["eventType"].(string) == "paymentRT" {
 
-					var vScore float64
-					vScore = 0.0
-
-					// Access the nested array
-					entities, ok := inboundResponsebodyMap["entities"].([]interface{})
-					if !ok {
-						err = errors.New("error accessing entities")
+					// Modularized
+					vScore, err := RiskScoreExtract(inboundResponsebodyMap)
+					if err != nil {
 						grpcLog.Errorln(err)
 
 					}
 
-					// entities are an array of json objects
-					for _, entity := range entities {
-						entityMap, ok := entity.(map[string]interface{})
+					// Remove shortly.
+					/*
+						// Score Extraction
+						var vScore float64
+						vScore = 0.0
+
+						// Access the nested array
+						entities, ok := inboundResponsebodyMap["entities"].([]interface{})
 						if !ok {
-							err = errors.New("error accessing entity details")
+							err = errors.New("error accessing entities")
 							grpcLog.Errorln(err)
+
 						}
 
-						// Access the details map for each language
-						overallScores, ok := entityMap["overallScore"].(map[string]interface{})
-						if !ok {
-							err = errors.New("error accessing overall score map details")
-							grpcLog.Errorln(err)
-						}
+						// entities are an array of json objects
+						for _, entity := range entities {
+							entityMap, ok := entity.(map[string]interface{})
+							if !ok {
+								err = errors.New("error accessing entity details")
+								grpcLog.Errorln(err)
+							}
 
-						for _, value := range overallScores {
-							if value != nil {
-								f, ok := value.(float64) // this won't panic because there's an ok
-								if ok {
-									if f > float64(vScore) {
-										vScore = f
+							// Access the details map for each language
+							overallScores, ok := entityMap["overallScore"].(map[string]interface{})
+							if !ok {
+								err = errors.New("error accessing overall score map details")
+								grpcLog.Errorln(err)
+							}
+
+							for _, value := range overallScores {
+								if value != nil {
+									f, ok := value.(float64) // this won't panic because there's an ok
+									if ok {
+										if f > float64(vScore) {
+											vScore = f
+										}
 									}
 								}
 							}
-						}
-					}
+						} */
 
 					if vGeneral.Debuglevel > 2 {
 						grpcLog.Infoln("overallScore for paymentRT    :", vScore)
@@ -1852,13 +1909,16 @@ func runLoader(arg string) {
 
 		if vGeneral.Debuglevel >= 1 {
 			vEnd := time.Now()
-			vTime := int(vEnd.Sub(vStart))
+			vElapse := vEnd.Sub(vStart)
 			grpcLog.Infoln("Start                         : ", vStart)
 			grpcLog.Infoln("End                           : ", vEnd)
-			grpcLog.Infoln("Duration (Seconds)            : ", vEnd.Sub(vStart))
+			grpcLog.Infoln("Elapsed Time (Seconds)        : ", vElapse.Seconds())
 			grpcLog.Infoln("Records Processed             : ", todo_count)
-			grpcLog.Infoln("int32 - vTime                 : ", vTime)
-			grpcLog.Infoln("Rate Txn/Second               : ", todo_count/vTime)
+			grpcLog.Infoln(fmt.Sprintf("                              :  %.3f Txns/Second", float64(todo_count)/vElapse.Seconds()))
+			grpcLog.Infoln(fmt.Sprintf("(x2 Txns)                     :  %.3f Events/Second", float64(todo_count)/vElapse.Seconds()*2))
+
+			//		grpcLog.Infoln(fmt.Sprintf("Transactions # / second       :  %.3f Txns/Second", float64(todo_count)/vElapse.Seconds()))
+			//		grpcLog.Infoln(fmt.Sprintf("Events # / second  (x2 Txns)  :  %.3f Events/Sec", float64(todo_count)/vElapse.Seconds()*2))
 
 			grpcLog.Infoln("")
 		}

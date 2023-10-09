@@ -1,0 +1,208 @@
+// https://jsonformatter.curiousconcept.com/#
+// engineResponse
+
+{
+    entities: [
+        {
+            tenantId: "tenant10",
+            entityType: "merchant",
+            entityId: "merchant1",
+            overallScore: {
+                aggregationModel: "aggModel",
+                overallScore: 0.2
+            },
+            models: [
+                {
+                    modelId: "model1",
+                    score: 0.5,
+                    confidence: 0.2,
+                    tags: [
+                        {
+                            tag: "codes",
+                            values: [
+                                "highValueTrans",
+                                "fraud"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    modelId: "model2",
+                    score: 0.1,
+                    confidence: 0.9,
+                    tags: [],
+                    modelData: { 
+                        a: "b"
+                    }
+                },
+                {
+                    modelId: "aggModel",
+                    score: 0.2,
+                    confidence: 0.9,
+                    tags: [],
+                    modelData: { 
+                        a: "d"
+                    }
+                }
+            ],
+            failedModels: [
+                "fm1",
+                "fm2"
+            ],
+            outputTags: [
+                {
+                     tag: "codes",
+                     values: [
+                        "highValueTransaction",
+                        "fraud"
+                    ]
+                },
+                {
+                    tag: "otherTag",
+                    values: [
+                        "t1",
+                        "t2"
+                    ]
+                }
+            ],
+            riskStatus: "review",
+            configGroups: [
+                {
+                    type: "global",
+                    triggeredRules: [
+                        "rule1",
+                        "rule2"
+                    ],
+                    aggregators: [
+                        {
+                            aggregatorId: "agg1",
+                            scores: {
+                                models: [
+                                    {
+                                        modelId: "model1",
+                                        score: 0.51
+                                    },
+                                    {
+                                        modelId: "model2",
+                                        score: 0.42
+                                    },
+                                    {
+                                        modelId: "aggModel",
+                                        score: 0.2
+                                    }
+                                ],
+                                tags: [
+                                    {
+                                        ns: "codes",
+                                        tag: "dodgy"
+                                    }
+                                ],
+                                rules: [
+                                    { 
+                                        ruleId: "rule1", 
+                                        score: 0.2
+                                    },
+                                    { 
+                                        ruleId: "rule2", 
+                                        score: 0.4
+                                    }
+                                ]
+                            },
+                            aggregateScore: 0.2,
+                            matchedBound: 0.1,
+                            outputTags: [
+                                {
+                                    tag: "codes",
+                                    values: [
+                                        "LowValueTrans"
+                                    ]
+                                }
+                            ],
+                            suppressedTags: [
+                                {
+                                    tag: "otherTag",
+                                    values: [
+                                        "t3",
+                                        "t4"
+                                    ]
+                                }
+                            ],
+                            alert: true,
+                            suppressAlert: false
+                        },
+                        {
+                            aggregatorId: "agg2"
+                        }
+                    ]
+                },
+                {
+                    type: "analytical",
+                    id: "acg1",
+                    triggeredRules: [
+                        "rule1",
+                        "rule3"
+                    ],
+                    aggregators: [
+                        "a",
+                        "d"
+                    ]
+                },
+                {
+                    type: "analytical",
+                    id: "acg2",
+                    triggeredRules: [
+                        "rule1",
+                        "rule3"
+                    ],
+                    aggregators: [
+                        "a",
+                        "r"
+                    ]
+                },
+                {
+                    type: "tenant",
+                    id: "tenant10",
+                    triggeredRules: [],
+                    aggregators: [
+                        "e",
+                        "y"
+                    ]
+                }
+            ]
+        },
+        {
+            entityType: "consumer",
+            entityId: "consumer1"
+        }
+    ],
+    jsonVersion: 4,
+    originatingEvent: { 
+            a: "e"
+    },
+    outputTime: "2015-02-10T13:45:22Z",
+    processorId: "proc",
+    versions: {
+        modelGraph: 4,
+        configGroups: [
+            { 
+                type: "global", 
+                version: "1"
+            },
+            { 
+                type: "analytical", 
+                id: "acg1", 
+                version: "3"
+            },
+            { 
+                type: "analytical", 
+                id: "acg2", 
+                version: "2"
+            },
+            { 
+                type: "tenant", 
+                id: "tenant10", 
+                version: "0"
+            }
+        ]
+    }
+}
