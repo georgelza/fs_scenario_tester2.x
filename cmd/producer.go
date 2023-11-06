@@ -47,6 +47,8 @@
 *
 *					: 4 Oct 2023	- Adding Prometheus metrics, via a Prometheus push gateway architecture.
 *
+*					: 3 Nov			- Adding the generate date/time control via updateActionDates, controlling if a supplied date and date/time is used or
+*									- if we generate based on system time. added to both addPayee* and payment*
 *
 *
 *	By				: George Leonard (georgelza@gmail.com)
@@ -726,6 +728,10 @@ func constructFakeFinTransaction() (t_OutboundPayment map[string]interface{}, t_
 func contructFinTransactionFromFile(varRec string) (t_OutboundPayment map[string]interface{}, t_InboundPayment map[string]interface{}, err error) {
 
 	var objs interface{}
+	var eventTime string
+	var creationDate string
+	var requestExecutionDate string
+	var settlementDate string
 
 	// read our opened jsonFile as a byte array.
 	byteValue, err := os.ReadFile(varRec)
@@ -765,10 +771,12 @@ func contructFinTransactionFromFile(varRec string) (t_OutboundPayment map[string
 			grpcLog.Errorln(err)
 			return nil, nil, err
 		}
+
 		if i == 0 {
 			t_InboundPayment = obj
 
 		}
+
 		if i == 1 {
 			t_OutboundPayment = obj
 
@@ -776,10 +784,28 @@ func contructFinTransactionFromFile(varRec string) (t_OutboundPayment map[string
 	}
 
 	txnId := uuid.New().String()
-	eventTime := time.Now().Format("2006-01-02T15:04:05")
-	creationDate := time.Now().Format("2006-01-02T15:04:05")
-	requestExecutionDate := time.Now().Format("2006-01-02")
-	settlementDate := time.Now().Format("2006-01-02")
+
+	if vGeneral.UpdateActionDates == 1 {
+		eventTime = time.Now().Format("2006-01-02T15:04:05")
+		creationDate = time.Now().Format("2006-01-02T15:04:05")
+
+	} else {
+		eventTime = vGeneral.ToBeUsedDateTime
+		creationDate = vGeneral.ToBeUsedDateTime
+	}
+
+	// Plsy with 2 evens to get them into the right order.
+
+	if t_InboundPayment["eventType"] == "paymentRT" || t_InboundPayment["eventType"] == "paymentNRT" || t_OutboundPayment["eventType"] == "paymentRT" || t_OutboundPayment["eventType"] == "paymentNRT" {
+		if vGeneral.UpdateActionDates == 1 {
+			requestExecutionDate = time.Now().Format("2006-01-02")
+			settlementDate = time.Now().Format("2006-01-02")
+
+		} else {
+			requestExecutionDate = vGeneral.ToBeUsedDate
+			settlementDate = vGeneral.ToBeUsedDate
+		}
+	}
 
 	// we update/refresh the eventID & eventTime, to ensure we don't get duplicate (and make it a payment in) id's at POST time
 	t_OutboundPayment["eventId"] = uuid.New().String()
@@ -974,6 +1000,8 @@ func httpCALL(Bytes []byte, url string, client *http.Client) (Response *http.Res
 }
 
 func RiskScoreExtract(t_Response map[string]interface{}) (riskScore float64, err error) {
+
+	// look at https://github.com/xing393939/jsonobject
 
 	// Score Extraction
 	var vScore float64
@@ -1254,6 +1282,8 @@ func runLoader(arg string) {
 
 		// At this point we have 2 Payloads, either fake or from source files.
 		// Now lets http post them
+		var vPaymentRTScore float64
+		var vAddPayeeRTScore float64
 		if vGeneral.Call_fs_api == 1 { // POST to API endpoint
 
 			grpcLog.Info("")
@@ -1385,80 +1415,41 @@ func runLoader(arg string) {
 
 			if InboundResponse.Status == "200 OK" { // paymentRT
 
-				// it's a paymentRT (only Inbound event that response with a 200 is paymentRT event)
-				if vGeneral.Prometheus_enabled == 1 && t_InboundPayload["eventType"].(string) == "paymentRT" {
+				if t_InboundPayload["eventType"].(string) == "paymentRT" {
 
-					// Modularized
-					vScore, err := RiskScoreExtract(inboundResponsebodyMap)
+					vPaymentRTScore, err = RiskScoreExtract(inboundResponsebodyMap)
 					if err != nil {
 						grpcLog.Errorln(err)
 
 					}
 
-					// Remove shortly.
-					/*
-						// Score Extraction
-						var vScore float64
-						vScore = 0.0
-
-						// Access the nested array
-						entities, ok := inboundResponsebodyMap["entities"].([]interface{})
-						if !ok {
-							err = errors.New("error accessing entities")
-							grpcLog.Errorln(err)
-
-						}
-
-						// entities are an array of json objects
-						for _, entity := range entities {
-							entityMap, ok := entity.(map[string]interface{})
-							if !ok {
-								err = errors.New("error accessing entity details")
-								grpcLog.Errorln(err)
-							}
-
-							// Access the details map for each language
-							overallScores, ok := entityMap["overallScore"].(map[string]interface{})
-							if !ok {
-								err = errors.New("error accessing overall score map details")
-								grpcLog.Errorln(err)
-							}
-
-							for _, value := range overallScores {
-								if value != nil {
-									f, ok := value.(float64) // this won't panic because there's an ok
-									if ok {
-										if f > float64(vScore) {
-											vScore = f
-										}
-									}
-								}
-							}
-						} */
-
 					if vGeneral.Debuglevel > 2 {
-						grpcLog.Infoln("overallScore for paymentRT    :", vScore)
+						grpcLog.Infoln("overallScore for paymentRT    :", vPaymentRTScore)
 
 					}
 
-					vParticipant = t_InboundPayload["tenantId"].(string)
-					vLocalInstrument = t_InboundPayload["localInstrument"].(string)
-					xScore := fmt.Sprintf("%v", vScore)
+					// it's a paymentRT (only Inbound event that response with a 200 is paymentRT event)
+					if vGeneral.Prometheus_enabled == 1 {
 
-					m.api_pmnt_duration.With(prometheus.Labels{
-						"hostname":       vGeneral.Hostname,
-						"msg_type":       t_InboundPayload["eventType"].(string),
-						"service":        vService,
-						"participant":    vParticipant,
-						"direction":      "inbound",
-						"payment_method": vLocalInstrument,
-						"score":          xScore}).Observe(apiInboundEnd)
+						vParticipant = t_InboundPayload["tenantId"].(string)
+						vLocalInstrument = t_InboundPayload["localInstrument"].(string)
+						xScore := fmt.Sprintf("%v", vPaymentRTScore)
 
+						m.api_pmnt_duration.With(prometheus.Labels{
+							"hostname":       vGeneral.Hostname,
+							"msg_type":       t_InboundPayload["eventType"].(string),
+							"service":        vService,
+							"participant":    vParticipant,
+							"direction":      "inbound",
+							"payment_method": vLocalInstrument,
+							"score":          xScore}).Observe(apiInboundEnd)
+
+					}
 				}
 
 				if vGeneral.Debuglevel > 2 {
 
-					grpcLog.Infoln("Inbound response Body         : paymentRT")
+					grpcLog.Infoln("Inbound response Body         : ", t_InboundPayload["eventType"].(string))
 
 				}
 
@@ -1470,6 +1461,7 @@ func runLoader(arg string) {
 					"responseStatus":  InboundResponse.Status,
 					"responseHeaders": InboundResponse.Header,
 					"responseBody":    inboundResponsebodyMap,
+					"overallscore":    vPaymentRTScore,
 					"processTime":     time.Now().UTC(),
 				}
 
@@ -1508,15 +1500,9 @@ func runLoader(arg string) {
 				}
 
 				if vGeneral.Debuglevel > 2 {
-					if t_InboundPayload["eventType"].(string) == "paymentNRT" {
 
-						grpcLog.Infoln("Inbound response Body         : paymentNRT")
+					grpcLog.Infoln("Inbound response Body         : ", t_InboundPayload["eventType"].(string))
 
-					} else if t_InboundPayload["eventType"].(string) == "AddPayeeNRT" {
-
-						grpcLog.Infoln("Inbound response Body         : AddPayeeNRT")
-
-					}
 				}
 
 				tInboundBody = map[string]interface{}{
@@ -1587,16 +1573,24 @@ func runLoader(arg string) {
 			}
 
 			if OutboundResponse.Status == "200 OK" { // AddPayeeRT
+				if t_OutboundPayload["eventType"].(string) == "addPayeeRT" {
 
-				if vGeneral.Prometheus_enabled == 1 {
+					// it's a addPayeeRT (only Outbound event that response with a 200 is addPayeeRT event)
+					vAddPayeeRTScore, err = RiskScoreExtract(outboundResponsebodyMap)
+					if err != nil {
+						grpcLog.Errorln(err)
 
-					// Confirm with FS if we need to extract the risk score for a addPayeeRT
-					//
+					}
 
-					vParticipant = t_OutboundPayload["tenantId"].(string)
-					vScore := fmt.Sprintf("%v", "0.0")
+					if vGeneral.Debuglevel > 2 {
+						grpcLog.Infoln("overallScore for addPayeeRT    :", vAddPayeeRTScore)
 
-					if t_OutboundPayload["eventType"].(string) == "addPayeeRT" {
+					}
+
+					if vGeneral.Prometheus_enabled == 1 {
+
+						vParticipant = t_OutboundPayload["tenantId"].(string)
+						xScore := fmt.Sprintf("%v", vAddPayeeRTScore)
 
 						m.api_addpayee_duration.With(prometheus.Labels{
 							"hostname":    vGeneral.Hostname,
@@ -1604,7 +1598,7 @@ func runLoader(arg string) {
 							"service":     vService,
 							"participant": vParticipant,
 							"direction":   "outbound",
-							"score":       vScore}).Observe(apiOutboundEnd)
+							"score":       xScore}).Observe(apiOutboundEnd)
 
 					}
 				}
@@ -1613,7 +1607,7 @@ func runLoader(arg string) {
 				// lets build a body of the header and some additional information
 				if vGeneral.Debuglevel > 2 {
 
-					grpcLog.Infoln("Outbound response Body        : addPayeeRT")
+					grpcLog.Infoln("Outbound response Body        : ", t_OutboundPayload["eventType"].(string))
 
 				}
 
@@ -1624,6 +1618,7 @@ func runLoader(arg string) {
 					"responseStatus":  OutboundResponse.Status,
 					"responseHeaders": OutboundResponse.Header,
 					"responseBody":    outboundResponsebodyMap,
+					"overallscore":    vAddPayeeRTScore,
 					"processTime":     time.Now().UTC(),
 				}
 
@@ -1652,7 +1647,12 @@ func runLoader(arg string) {
 
 				if vGeneral.Debuglevel > 2 {
 
-					grpcLog.Infoln("Outbound response Body        : paymentNRT")
+					if vGeneral.Debuglevel > 2 {
+
+						grpcLog.Infoln("Outbound response Body        : ", t_OutboundPayload["eventType"].(string))
+
+					}
+
 				}
 
 				tOutboundBody = map[string]interface{}{

@@ -29,6 +29,9 @@ type Tp_general struct {
 	ProxyURL                string  // Proxy server to use
 	Prometheus_enabled      int     // Do we want to use the prometheus instrumentation
 	Prometheus_push_gateway string  // if above = 1 then we use the <ip:port>
+	UpdateActionDates       int     // if 0 the below date and date/time is used, if = 1 then a value is generated based on current date/time of system
+	ToBeUsedDate            string
+	ToBeUsedDateTime        string
 }
 
 // FS engineResponse components
