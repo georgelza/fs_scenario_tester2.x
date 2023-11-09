@@ -1165,7 +1165,7 @@ func runLoader(arg string) {
 
 		reccount := fmt.Sprintf("%v", count+1)
 
-		if vGeneral.Debuglevel > 1 {
+		if vGeneral.Debuglevel > 0 {
 			grpcLog.Infoln("")
 			grpcLog.Infoln("Record                        :", reccount)
 
@@ -1286,9 +1286,11 @@ func runLoader(arg string) {
 		var vAddPayeeRTScore float64
 		if vGeneral.Call_fs_api == 1 { // POST to API endpoint
 
-			grpcLog.Info("")
-			grpcLog.Info("Call API Flow")
-			grpcLog.Info("")
+			if vGeneral.Debuglevel > 1 {
+				grpcLog.Info("")
+				grpcLog.Info("Call API Flow")
+				grpcLog.Info("")
+			}
 
 			var vParticipant string
 			var vLocalInstrument string
@@ -1301,7 +1303,7 @@ func runLoader(arg string) {
 
 			if t_InboundPayload["eventType"] == "paymentNRT" || t_InboundPayload["eventType"] == "paymentRT" {
 
-				if vGeneral.Debuglevel > 0 {
+				if vGeneral.Debuglevel > 1 {
 					grpcLog.Infoln("payment* Flow")
 				}
 
@@ -1339,7 +1341,7 @@ func runLoader(arg string) {
 
 			} else {
 
-				if vGeneral.Debuglevel > 0 {
+				if vGeneral.Debuglevel > 1 {
 					grpcLog.Infoln("")
 					grpcLog.Infoln("AddPayee* Flow")
 				}
@@ -1387,7 +1389,7 @@ func runLoader(arg string) {
 
 			}
 
-			if vGeneral.Debuglevel > 0 {
+			if vGeneral.Debuglevel > 1 {
 				grpcLog.Infoln("")
 				grpcLog.Infoln("Inbound API Call Time         :", apiInboundEnd, "Sec")
 				grpcLog.Infoln("Outbound API Call Time        :", apiOutboundEnd, "Sec")
@@ -1400,12 +1402,12 @@ func runLoader(arg string) {
 
 				}
 			}
-
-			grpcLog.Infoln("")
-			grpcLog.Infoln("Inbound response Status       :", InboundResponse.Status)
-			grpcLog.Infoln("Outbound response Status      :", OutboundResponse.Status)
-			grpcLog.Infoln("")
-
+			if vGeneral.Debuglevel > 1 {
+				grpcLog.Infoln("")
+				grpcLog.Infoln("Inbound response Status       :", InboundResponse.Status)
+				grpcLog.Infoln("Outbound response Status      :", OutboundResponse.Status)
+				grpcLog.Infoln("")
+			}
 			// Define a map to hold the JSON data
 			var inboundResponsebodyMap map[string]interface{}
 			_ = json.Unmarshal(jsonDataInboundResponsebody, &inboundResponsebodyMap)
@@ -1746,26 +1748,26 @@ func runLoader(arg string) {
 		// first is outputting the posted event data to a file <transaction id>-<event id>.json
 		// the second is the http response received, which will go to <transaction id>-<event id>-out.json
 
+		//...................................
+		// Writing struct type to a JSON file
+		//...................................
+		// Writing
+		// https://www.golangprograms.com/golang-writing-struct-to-json-file.html
+		// https://www.developer.com/languages/json-files-golang/
+		// Reading
+		// https://medium.com/kanoteknologi/better-way-to-read-and-write-json-file-in-golang-9d575b7254f2
+
 		if vGeneral.Json_to_file == 1 {
 
 			grpcLog.Info("")
 			grpcLog.Info("JSON to File Flow")
-
-			//...................................
-			// Writing struct type to a JSON file
-			//...................................
-			// Writing
-			// https://www.golangprograms.com/golang-writing-struct-to-json-file.html
-			// https://www.developer.com/languages/json-files-golang/
-			// Reading
-			// https://medium.com/kanoteknologi/better-way-to-read-and-write-json-file-in-golang-9d575b7254f2
 
 			// We need to do 2 api calls, 1 each for outbound and inbound event.
 
 			// Inbound
 			// The posted event
 			loc_in := fmt.Sprintf("%s%s%s_%s-%s.json", vGeneral.Output_path, pathSep, reccount, TransactionId, InboundTagId)
-			if vGeneral.Debuglevel > 0 {
+			if vGeneral.Debuglevel > 1 {
 				grpcLog.Infoln("Inbound Output Event          :", loc_in)
 
 			}
@@ -1785,7 +1787,7 @@ func runLoader(arg string) {
 			// Outbound
 			// The posted event
 			loc_out := fmt.Sprintf("%s%s%s_%s-%s.json", vGeneral.Output_path, pathSep, reccount, TransactionId, OutboundTagId)
-			if vGeneral.Debuglevel > 0 {
+			if vGeneral.Debuglevel > 1 {
 				grpcLog.Infoln("Outbound Output Event         :", loc_out)
 
 			}
@@ -1804,75 +1806,82 @@ func runLoader(arg string) {
 
 		}
 
-		// Did we call the API endpoint above... if yes then do these steps
-		// here we save the result to a file.
+		// Did we call the API endpoint above... if yes and
+		// if engineResponse_to_file == 1 then then do these steps
+		// here we save the result (http code and engineResponse) to a file.
 		if vGeneral.Call_fs_api == 1 {
 
 			var loc_in string
 			var loc_out string
 
-			sourcefile := strings.Split(returnedRecs[count], ".")[0]
+			if vGeneral.EngineResponse_to_file == 1 {
 
-			// inbound engineResponse
-			if vGeneral.Json_from_file == 1 {
-				loc_in = fmt.Sprintf("%s%s%s-%s-%s-out.json", vGeneral.Output_path, pathSep, sourcefile, TransactionId, InboundTagId)
+				grpcLog.Info("")
+				grpcLog.Info("engineResponse to File Flow")
 
-			} else {
-				loc_in = fmt.Sprintf("%s%s%s_%s-%s-out.json", vGeneral.Output_path, pathSep, reccount, TransactionId, InboundTagId)
+				sourcefile := strings.Split(returnedRecs[count], ".")[0]
 
-			}
+				// inbound engineResponse
+				if vGeneral.Json_from_file == 1 {
+					loc_in = fmt.Sprintf("%s%s%s-%s-%s-out.json", vGeneral.Output_path, pathSep, sourcefile, TransactionId, InboundTagId)
 
-			if vGeneral.Debuglevel > 0 {
-				grpcLog.Infoln("Inbound engineResponse file   :", loc_in)
-				grpcLog.Infoln("")
+				} else {
+					loc_in = fmt.Sprintf("%s%s%s_%s-%s-out.json", vGeneral.Output_path, pathSep, reccount, TransactionId, InboundTagId)
 
-			}
+				}
 
-			fj_in, err := json.MarshalIndent(tInboundBody, "", " ")
-			if err != nil {
-				grpcLog.Errorln("MarshalIndent error", err)
+				if vGeneral.Debuglevel > 1 {
+					grpcLog.Infoln("Inbound engineResponse file   :", loc_in)
+					grpcLog.Infoln("")
 
-			}
+				}
 
-			err = os.WriteFile(loc_in, fj_in, 0644)
-			if err != nil {
-				grpcLog.Errorln("os.WriteFile error", err)
+				fj_in, err := json.MarshalIndent(tInboundBody, "", " ")
+				if err != nil {
+					grpcLog.Errorln("MarshalIndent error", err)
 
-			}
+				}
 
-			// outbound engineResponse
-			if vGeneral.Json_from_file == 1 {
-				loc_out = fmt.Sprintf("%s%s%s-%s-%s-out.json", vGeneral.Output_path, pathSep, sourcefile, TransactionId, OutboundTagId)
+				err = os.WriteFile(loc_in, fj_in, 0644)
+				if err != nil {
+					grpcLog.Errorln("os.WriteFile error", err)
 
-			} else {
-				loc_out = fmt.Sprintf("%s%s%s_%s-%s-out.json", vGeneral.Output_path, pathSep, reccount, TransactionId, OutboundTagId)
+				}
 
-			}
-			if vGeneral.Debuglevel > 0 {
-				grpcLog.Infoln("Outbound engineResponse file  :", loc_out)
+				// outbound engineResponse
+				if vGeneral.Json_from_file == 1 {
+					loc_out = fmt.Sprintf("%s%s%s-%s-%s-out.json", vGeneral.Output_path, pathSep, sourcefile, TransactionId, OutboundTagId)
 
-			}
+				} else {
+					loc_out = fmt.Sprintf("%s%s%s_%s-%s-out.json", vGeneral.Output_path, pathSep, reccount, TransactionId, OutboundTagId)
 
-			fj_out, err := json.MarshalIndent(tOutboundBody, "", " ")
-			if err != nil {
-				grpcLog.Errorln("MarshalIndent error", err)
+				}
+				if vGeneral.Debuglevel > 1 {
+					grpcLog.Infoln("Outbound engineResponse file  :", loc_out)
 
-			}
+				}
 
-			err = os.WriteFile(loc_out, fj_out, 0644)
-			if err != nil {
-				grpcLog.Errorln("os.WriteFile error", err)
+				fj_out, err := json.MarshalIndent(tOutboundBody, "", " ")
+				if err != nil {
+					grpcLog.Errorln("MarshalIndent error", err)
 
-			}
+				}
 
-			// lets report how long it took us to write data to output files
-			if vGeneral.Debuglevel > 0 {
-				grpcLog.Infoln("JSON to File                  :", time.Since(fileStart).Seconds(), "Sec")
+				err = os.WriteFile(loc_out, fj_out, 0644)
+				if err != nil {
+					grpcLog.Errorln("os.WriteFile error", err)
 
+				}
+
+				// lets report how long it took us to write data to output files
+				if vGeneral.Debuglevel > 1 {
+					grpcLog.Infoln("JSON to File                  :", time.Since(fileStart).Seconds(), "Sec")
+
+				}
 			}
 		}
 
-		if vGeneral.Debuglevel > 0 {
+		if vGeneral.Debuglevel > 1 {
 			grpcLog.Infoln("Total Time                    :", time.Since(txnStart).Seconds(), "Sec")
 
 		}
@@ -1902,27 +1911,23 @@ func runLoader(arg string) {
 
 	}
 
-	if vGeneral.Debuglevel > 0 {
-		grpcLog.Infoln("")
-		grpcLog.Infoln("**** DONE Processing ****")
-		grpcLog.Infoln("")
+	grpcLog.Infoln("")
+	grpcLog.Infoln("**** DONE Processing ****")
+	grpcLog.Infoln("")
 
-		if vGeneral.Debuglevel >= 1 {
-			vEnd := time.Now()
-			vElapse := vEnd.Sub(vStart)
-			grpcLog.Infoln("Start                         : ", vStart)
-			grpcLog.Infoln("End                           : ", vEnd)
-			grpcLog.Infoln("Elapsed Time (Seconds)        : ", vElapse.Seconds())
-			grpcLog.Infoln("Records Processed             : ", todo_count)
-			grpcLog.Infoln(fmt.Sprintf("                              :  %.3f Txns/Second", float64(todo_count)/vElapse.Seconds()))
-			grpcLog.Infoln(fmt.Sprintf("(x2 Txns)                     :  %.3f Events/Second", float64(todo_count)/vElapse.Seconds()*2))
+	vEnd := time.Now()
+	vElapse := vEnd.Sub(vStart)
+	grpcLog.Infoln("Start                         : ", vStart)
+	grpcLog.Infoln("End                           : ", vEnd)
+	grpcLog.Infoln("Elapsed Time (Seconds)        : ", vElapse.Seconds())
+	grpcLog.Infoln("Records Processed             : ", todo_count)
+	grpcLog.Infoln(fmt.Sprintf("                              :  %.3f Txns/Second", float64(todo_count)/vElapse.Seconds()))
+	grpcLog.Infoln(fmt.Sprintf("(x2 Txns)                     :  %.3f Events/Second", float64(todo_count)/vElapse.Seconds()*2))
 
-			//		grpcLog.Infoln(fmt.Sprintf("Transactions # / second       :  %.3f Txns/Second", float64(todo_count)/vElapse.Seconds()))
-			//		grpcLog.Infoln(fmt.Sprintf("Events # / second  (x2 Txns)  :  %.3f Events/Sec", float64(todo_count)/vElapse.Seconds()*2))
+	//		grpcLog.Infoln(fmt.Sprintf("Transactions # / second       :  %.3f Txns/Second", float64(todo_count)/vElapse.Seconds()))
+	//		grpcLog.Infoln(fmt.Sprintf("Events # / second  (x2 Txns)  :  %.3f Events/Sec", float64(todo_count)/vElapse.Seconds()*2))
 
-			grpcLog.Infoln("")
-		}
-	}
+	grpcLog.Infoln("")
 
 } // runLoader()
 

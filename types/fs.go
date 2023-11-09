@@ -16,6 +16,7 @@ type Tp_general struct {
 	Datamode                string  // rpp or hist
 	Sourcesystem            string  // IF hist then we can further elaborate if eft/ac/rtc
 	Json_to_file            int     // Do we output JSON to file in output_path
+	EngineResponse_to_file  int     // Do we write http response and engineResponse to file
 	Output_path             string  // output location
 	Json_from_file          int     // Do we read JSON from input_path directory and post to FS API endpoint
 	Input_path              string  // Where are my scenario JSON files located
